@@ -17,13 +17,10 @@ export default class Home extends Component {
         </p>
         <img
           alt='this is adoption'
-          src='https://www.humanesocietymiami.org/wp-content/uploads/2020/04/Adopt-a-shelter-pet-today_dog-2000px.jpg'
+          src='https://i.insider.com/51cd94f0eab8eaae1800001b'
         />
-        <Link to='/cat-adopt'>
-          <button> View Cats </button>
-        </Link>
-        <Link to='/dog-adopt'>
-          <button> View Dogs </button>
+        <Link to='/adopt'>
+          <button> Adopt Today! </button>
         </Link>
       </div>
     );

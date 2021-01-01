@@ -1,10 +1,12 @@
-import React, { Component } from "react";
+import React from "react";
 import config from "../config";
-import PetService from "../services/pets-service";
-import PeopleService from "../services/person-service";
-import "../styles/Adopt.css";
+import DogService from "../services/dog-service";
+import CatService from "../services/cat-service"
+import PeopleService from "../services/people-service";
+import AppContext from "../Context/context"
 
-export class Adopt extends Component {
+export class Adopt extends React.Component {
+  static contextType = AppContext
   constructor() {
     super();
     this.state = {
@@ -23,13 +25,13 @@ export class Adopt extends Component {
     this.fetchData();
   }
   fetchData = () => {
-    PetService.getAllPets().then((pets) => {
+    DogService.getAllPets().then((pets) => {
+      console.log(pets, "dogs array");
       this.setState({
-        cats: pets.cat,
-        dogs: pets.dog,
+        dogs: pets.dog
       });
     });
-    PeopleService.getAllPeople()
+    PeopleService.getPeople()
       .then((people) => {
         console.log(people, "people array");
         this.setState({ people });
@@ -48,7 +50,7 @@ export class Adopt extends Component {
         });
         return clearInterval(countdown);
       }
-      fetch(`${config.API_BASE_URL}/pets`, {
+      fetch(`${config.API_ENDPOINT}/pets`, {
         method: "DELETE",
         header: {
           "content-type": "application/json",
@@ -60,12 +62,10 @@ export class Adopt extends Component {
 
   addToQueue = () => {
     let peopleNames = [
-      "Rachel",
-      "Larry Horan",
-      "Niall",
-      "Tanner Fue",
-      "Lacy Green",
-      "Ethan",
+      "Oneiam",
+      "Twosonn",
+      "Thrite",
+      "Fourile",
     ];
 
     let addPeople = setInterval(() => {
@@ -76,7 +76,7 @@ export class Adopt extends Component {
       let index = Math.floor(Math.random() * peopleNames.length);
       let person = peopleNames[index];
 
-      fetch(`${config.API_BASE_URL}/people`, {
+      fetch(`${config.API_ENDPOINT}/people`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -94,7 +94,7 @@ export class Adopt extends Component {
       return;
     }
     if (counter % 2 === 0) {
-      fetch(`${config.API_BASE_URL}/pets`, {
+      fetch(`${config.API_ENDPOINT}/pets`, {
         method: "DELETE",
         headers: {
           "content-type": "application/json",
@@ -102,7 +102,7 @@ export class Adopt extends Component {
         body: JSON.stringify({ type: "cats" }),
       }).then(() => this.fetchData());
     } else {
-      fetch(`${config.API_BASE_URL}/pets`, {
+      fetch(`${config.API_ENDPOINT}/pets`, {
         method: "DELETE",
         headers: {
           "content-type": "application/json",
@@ -116,7 +116,7 @@ export class Adopt extends Component {
     event.preventDefault();
     let person = this.state.fullName;
     this.setState({ currentUser: person });
-    fetch(`${config.API_BASE_URL}/people`, {
+    fetch(`${config.API_ENDPOINT}/people`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -136,7 +136,7 @@ export class Adopt extends Component {
 
   handleAdoptClick = (event) => {
     event.preventDefault();
-    fetch(`${config.API_BASE_URL}/pets`, {
+    fetch(`${config.API_ENDPOINT}/pets`, {
       method: "DELETE",
       header: {
         "content-type": "application/json",
