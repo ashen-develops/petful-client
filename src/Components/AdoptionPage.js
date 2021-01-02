@@ -1,92 +1,94 @@
 import React from "react";
 import config from "../config";
+import Queue from "../services/queue"
 import DogService from "../services/dog-service";
 import CatService from "../services/cat-service"
 import PeopleService from "../services/people-service";
-import AppContext from "../Context/context"
+import PetContext from "../Context/context"
 
 export class Adopt extends React.Component {
-  static contextType = AppContext
-  constructor() {
-    super();
-    this.state = {
-      cats: [],
-      dogs: [],
-      people: [],
-      pets: {},
-      OK: false,
-      fullName: "",
-      currentUser: "",
-      isHidden: true,
-    };
-  }
+  static contextType = PetContext
 
   componentDidMount() {
-    this.fetchData();
+    this.context.clearCurrentCat();
+    this.context.clearCurrentDog();
+    this.context.clearQueue();
+    this.context.clearError();
+
+    this.interval = setInterval( this.cycleList.bind(this), 15000)
+    Promise.all([CatService.getCat(), DogService.getDog(), PeopleService.getPeople()])
+      .then((res) => {
+        this.context.setCurrentCat(res[0])
+        this.context.setCurrentdog(res[1])
+        let personQueue = new Queue()
+        res[2].forEach(person => personQueue.enqueue(person))
+        this.context.setQueue(personQueue)
+      })
+      .catch(e => console.error(e));
   }
-  fetchData = () => {
-    DogService.getAllPets().then((pets) => {
-      console.log(pets, "dogs array");
-      this.setState({
-        dogs: pets.dog
-      });
-    });
-    PeopleService.getPeople()
-      .then((people) => {
-        console.log(people, "people array");
-        this.setState({ people });
+
+  // petCountdown = () => {
+  //   let countdown = setInterval(() => {
+  //     console.log(this.state);
+  //     if (this.state.people.length < 2) {
+  //       this.addToQueue();
+  //       this.setState({
+  //         isHidden: false,
+  //       });
+  //       return clearInterval(countdown);
+  //     }
+  //     fetch(`${config.API_ENDPOINT}/pets`, {
+  //       method: "DELETE",
+  //       header: {
+  //         "content-type": "application/json",
+  //       },
+  //     }).then(() => this.fetchData());
+  //     this.adopted();
+  //   }, 4000);
+  // };
+
+  // addToQueue = () => {
+  //   let peopleNames = [
+  //     "Oneiam",
+  //     "Twosonn",
+  //     "Thrite",
+  //     "Fourile",
+  //   ];
+  handleAdoptDog = () => {
+    return DogService.deleteDog()
+      .then(res => {
+        let owner = this.context.queue.requeue();
+        res.owner = owner;
+        this.context.setAdopted(res);
       })
-      .catch((e) => console.error(e));
-  };
-  // }
-
-  petCountdown = () => {
-    let countdown = setInterval(() => {
-      console.log(this.state);
-      if (this.state.people.length < 2) {
-        this.addToQueue();
-        this.setState({
-          isHidden: false,
-        });
-        return clearInterval(countdown);
-      }
-      fetch(`${config.API_ENDPOINT}/pets`, {
-        method: "DELETE",
-        header: {
-          "content-type": "application/json",
-        },
-      }).then(() => this.fetchData());
-      this.adopted();
-    }, 4000);
-  };
-
-  addToQueue = () => {
-    let peopleNames = [
-      "Oneiam",
-      "Twosonn",
-      "Thrite",
-      "Fourile",
-    ];
-
-    let addPeople = setInterval(() => {
-      if (this.state.people.length > 4) {
-        return clearInterval(addPeople);
-      }
-
-      let index = Math.floor(Math.random() * peopleNames.length);
-      let person = peopleNames[index];
-
-      fetch(`${config.API_ENDPOINT}/people`, {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({ person }),
+      .then(res => {
+        DogService.getDog().then(res => this.context.setDog(res));
       })
-        .then((res) => res.json())
-        .then(() => this.fetchData());
-    }, 4000);
-  };
+  }
+
+  handleAdoptCat = () => {
+    return DogService.deleteCat()
+      .then(res => {
+        let owner = this.context.queue.requeue();
+        res.owner = owner;
+        this.context.setAdopted(res);
+      })
+      .then(res => {
+        DogService.getCat().then(res => this.context.setCat(res));
+      })
+  }
+
+  cycleList = () => {
+    if(this.context.userName !== this.context.queue.first.value) {
+      let c = Math.floor(Math.random() * 100)
+      if(c < 50) {
+        this.handleAdoptCat()
+      }
+      else {
+        this.handleAdoptDog()
+      }
+    }
+  }
 
   adopted = (petId = null) => {
     let counter = petId ? petId : this.state.people.length;
@@ -148,6 +150,10 @@ export class Adopt extends React.Component {
       isHidden: true,
     });
   };
+
+  componentWillUnmount() {
+    clearInterval(this.interval)
+  }
 
   render() {
     let hiddenClass = this.state.isHidden ? "hiddenClass" : "";
