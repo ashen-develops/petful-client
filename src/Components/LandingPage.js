@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PetContext from '../Context/context';
 import PeopleService from '../services/people-service';
 
-export default class Home extends Component {
+class Home extends Component {
   static contextType = PetContext;
 
   handleSubmit = (e) => {
@@ -56,3 +56,5 @@ export default class Home extends Component {
     );
   }
 }
+
+export default Home;
