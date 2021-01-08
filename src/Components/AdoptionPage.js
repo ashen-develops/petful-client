@@ -1,62 +1,40 @@
 import React from "react";
-import Queue from "../services/queue"
+import Queue from "../services/queue";
 import DogService from "../services/dog-service";
-import CatService from "../services/cat-service"
+import CatService from "../services/cat-service";
 import PeopleService from "../services/people-service";
-import PetContext from "../Context/context"
+import PetContext from "../Context/context";
 import Adopted from "./Adopted";
 import Info from "./Info";
-import People from "./People";
+import PeopleInQueue from "./People";
 
-class Adopt extends React.Component {
-  static contextType = PetContext
+class AdoptionPage extends React.Component {
+  static contextType = PetContext;
 
   componentDidMount() {
+    console.log(this.context)
+    this.context.clearError();
+    this.context.clearQueue();
     this.context.clearCurrentCat();
     this.context.clearCurrentDog();
-    this.context.clearQueue();
-    this.context.clearError();
 
-    this.interval = setInterval( this.cycleList.bind(this), 15000)
+    //set interval line 22
+    this.interval = setInterval( this.cycleList.bind(this), 5000)
     Promise.all([CatService.getCat(), DogService.getDog(), PeopleService.getPeople()])
       .then((res) => {
         this.context.setCurrentCat(res[0])
-        this.context.setCurrentdog(res[1])
-        let personQueue = new Queue()
-        res[2].forEach(person => personQueue.enqueue(person))
-        this.context.setQueue(personQueue)
+        this.context.setCurrentDog(res[1])
+        let userQueue = new Queue()
+        res[2].forEach(user => userQueue.enqueue(user))
+        this.context.setQueue(userQueue)
       })
       .catch(e => console.error(e));
   }
 
-  handleAdoptDog = () => {
-    return DogService.deleteDog()
-      .then(res => {
-        let owner = this.context.queue.requeue();
-        res.owner = owner;
-        this.context.setAdopted(res);
-      })
-      .then(res => {
-        DogService.getDog().then(res => this.context.setDog(res));
-      })
-  }
-
-  handleAdoptCat = () => {
-    return DogService.deleteCat()
-      .then(res => {
-        let owner = this.context.queue.requeue();
-        res.owner = owner;
-        this.context.setAdopted(res);
-      })
-      .then(res => {
-        DogService.getCat().then(res => this.context.setCat(res));
-      })
-  }
-
   cycleList = () => {
-    if(this.context.userName !== this.context.queue.first.value) {
-      let c = Math.floor(Math.random() * 100)
-      if(c < 50) {
+    if(this.context.userName !== this.context.queue.first.value){
+      let coin = Math.floor(Math.random() * 100)
+      if(coin < 50){
         this.handleAdoptCat()
       }
       else {
@@ -65,16 +43,21 @@ class Adopt extends React.Component {
     }
   }
 
+
+  
+
   componentWillUnmount() {
     clearInterval(this.interval)
   }
 
-  renderPeople() {
+  renderLine() {
+    // console.log(this.context.queue.first.value)
+
     return (
-      <People
+      <PeopleInQueue
         first={this.context.queue.first.value}
         second={this.context.queue.first.next.value}
-        third={this.context.queue.first.next.value}
+        third={this.context.queue.first.next.next.value}
       />
     );
   }
@@ -88,15 +71,40 @@ class Adopt extends React.Component {
       />
     );
   }
-
   renderDog() {
     return (
       <Info
         animal={this.context.currentDog}
-        animalType={'cat'}
+        animalType={'dog'}
         handleAdoptClick={this.handleAdoptDog}
       />
     );
+  }
+
+  handleAdoptCat = () =>  {
+    return CatService.deleteCat()
+      .then(res => {
+        let owner = this.context.queue.requeue();
+        res.owner = owner;
+        this.context.setAdopted(res);
+      })
+      .then(res => {
+        CatService.getCat().then(res => this.context.setCurrentCat(res));
+        this.setState({ nowAdopting: this.context.queue.first.value });
+      });
+  }
+
+  handleAdoptDog = () =>  {
+    return DogService.deleteDog()
+      .then(res => {
+        let owner = this.context.queue.requeue();
+        res.owner = owner;
+        this.context.setAdopted(res);
+      })
+      .then(res => {
+        DogService.getDog().then(res => this.context.setCurrentDog(res));
+        this.setState({ nowAdopting: this.context.queue.first.value });
+      });
   }
 
   render() {
@@ -107,38 +115,35 @@ class Adopt extends React.Component {
           name={animal.name}
           owner={animal.owner}
         />
+      </div>
+    );
 
-      </div>)
     return (
       <div>
-          <h1>Let's See Who Is In Line?</h1>
-          {this.context.queue ? this.renderPeople() : "Loading..."}
-          <h2>Cats</h2>
-          {this.renderCat()}
-        <h2>Dogs</h2>
-          {this.renderDog()}
-        <form onSubmit={this.onSubmit}>
-          <h1>Get in Line!</h1>
-          <div className="landing-content">
-            <label className="full-name" htmlFor="full-name">
-              Enter Your Name
-            </label>
-            <br />
-            <input
-              onChange={(event) =>
-                this.setState({ fullName: event.currentTarget.value })
-              }
-              type="text"
-              id="full-name"
-            />
-            <br />
-            <br />
-            <button>Join Our Queue</button>
+        <h1>
+          Your Fur Baby Awaits
+        </h1>
+        {this.context.queue ? this.renderLine() : 'Loading Pets! ...'}
+
+        <div className='Pets-available'>
+          <h2>Available Pets</h2>
+          <div className='cat'>
+            <h3>Cat</h3>
+            {this.renderCat()}
           </div>
-        </form>
+          <div className='dog'>
+            <h3>Dog</h3>
+            {this.renderDog()}
+          </div>
+        </div>
+        <div className='Pets-adopted'>
+          <h3>Adopted</h3>
+          {petAdopted}
+        </div>
       </div>
     );
   }
-}
 
-export default Adopt;
+
+}
+export default AdoptionPage;

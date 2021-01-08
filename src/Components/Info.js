@@ -1,8 +1,8 @@
 import React from 'react';
-import PetContext from '../context/context';
+import AppContext from '../Context/context';
 
 class Info extends React.Component {
-  static contextType = PetContext
+  static contextType = AppContext
   render() {
 
     const {animal, handleAdoptClick} = this.props

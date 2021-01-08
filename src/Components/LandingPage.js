@@ -38,7 +38,7 @@ class Home extends Component {
           src='https://i.insider.com/51cd94f0eab8eaae1800001b'
         />
         <Link to='/adopt'>
-          <button> Adopt Today! </button>
+          <button> Preview Adoptions </button>
         </Link>
 
         <form className='addName' onSubmit={this.handleSubmit} >
