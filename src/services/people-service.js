@@ -13,7 +13,7 @@ const PeopleService = {
   },
 
   postPeople(person) {
-    console.log(person)
+    // console.log(person)
     return fetch(`${config.API_ENDPOINT}/people`, {
       method: "POST",
       headers: {

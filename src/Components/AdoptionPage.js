@@ -12,7 +12,7 @@ class AdoptionPage extends React.Component {
   static contextType = PetContext;
 
   componentDidMount() {
-    console.log(this.context)
+    // console.log(this.context)
     this.context.clearError();
     this.context.clearQueue();
     this.context.clearCurrentCat();

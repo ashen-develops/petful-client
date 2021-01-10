@@ -12,7 +12,7 @@ class Home extends Component {
     this.context.clearError();
     
     let name = document.getElementById('name').value;
-    console.log(name)
+    // console.log(name)
     this.context.setUserName(name);
 
     return PeopleService.postPeople(name)
