@@ -11,7 +11,8 @@ class Home extends Component {
     this.context.clearUserName();
     this.context.clearError();
     
-    let name = document.getElementById('name').nodeValue;
+    let name = document.getElementById('name').value;
+    console.log(name)
     this.context.setUserName(name);
 
     return PeopleService.postPeople(name)
@@ -20,6 +21,7 @@ class Home extends Component {
         const destination = (location.state || {}).from || '/adopt';
         history.push(destination);
       })
+      .catch(error => console.log(error))
   }
 
   render() {

@@ -19,7 +19,7 @@ class AdoptionPage extends React.Component {
     this.context.clearCurrentDog();
 
     //set interval line 22
-    this.interval = setInterval( this.cycleList.bind(this), 5000)
+    this.interval = setInterval( this.cycleList.bind(this), 25000)
     Promise.all([CatService.getCat(), DogService.getDog(), PeopleService.getPeople()])
       .then((res) => {
         this.context.setCurrentCat(res[0])
@@ -121,7 +121,7 @@ class AdoptionPage extends React.Component {
     return (
       <div>
         <h1>
-          Your Fur Baby Awaits
+          Adopt a Dang Dog (or cat)!
         </h1>
         {this.context.queue ? this.renderLine() : 'Loading Pets! ...'}
 
