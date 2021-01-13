@@ -7,8 +7,9 @@ import PetContext from "../Context/context";
 import Adopted from "./Adopted";
 import Info from "./Info";
 import PeopleInQueue from "./People";
+import { Link } from 'react-router-dom';
 
-class AdoptionPageOne extends React.Component {
+class AdoptionPageTwo extends React.Component {
   static contextType = PetContext;
 
   constructor(props) {
@@ -137,7 +138,7 @@ class AdoptionPageOne extends React.Component {
     return PeopleService.postPeople(name)
       .then(res => {
         const { location, history } = this.props;
-        const destination = (location.state || {}).from || '/adopt2';
+        const destination = (location.state || {}).from || '/adopt1';
         history.push(destination);
       })
       .catch(error => console.log(error))
@@ -156,46 +157,39 @@ class AdoptionPageOne extends React.Component {
 
     return (
       <div>
-        {/* {!this.state.clicked ? ( */}
-        <div>
         <h1>
-        Adopt a Dang Dog (or cat)!
-      </h1>
-      <form className='addName' onSubmit={this.handleSubmit} >
-        <p>
-          By adding your name to the queue you will be matched with an appropritate pet.
-        </p>
-        <label htmlFor='name'>Name</label>
-        <input type='text' name='name' id='name' required />
-        <button type='submit'> Match Me!</button>
-      </form>
-      {this.context.queue ? this.renderLine() : 'Loading Pets! ...'}
-      <div className='Pets-available'>
-        <h2>Available Pets</h2>
-        <div className='cat'>
-          <h3>Cat</h3>
-          {this.renderCat()}
-        </div>
-        <div className='dog'>
-          <h3>Dog</h3>
-          {this.renderDog()}
-        </div>
-      </div>
-      <div className='Pets-adopted'>
-        <h3>Adopted</h3>
-        {petAdopted}
-      </div>
-    </div>
-        {/* ) : (
-          <div>
-            <h1>Congratulations on your new pet!</h1>
-          </div>
-        )} */}
+          Adopt a Dang Dog (or cat)!
+        </h1>
+        <form className='addName' onSubmit={this.handleSubmit} >
+          <p>
+            By adding your name to the queue you will be matched with an appropritate pet.
+          </p>
+          <label htmlFor='name'>Name</label>
+          <input type='text' name='name' id='name' required />
+          <button type='submit'> Match Me!</button>
+        </form>
+        {this.context.queue ? this.renderLine() : 'Loading Pets! ...'}
+        {this.state.clicked ? 'Congratulations On Adopting Your Pet!' : null}
 
+        <div className='Pets-available'>
+          <h2>Available Pets</h2>
+          <div className='cat'>
+            <h3>Cat</h3>
+            {this.renderCat()}
+          </div>
+          <div className='dog'>
+            <h3>Dog</h3>
+            {this.renderDog()}
+          </div>
+        </div>
+        <div className='Pets-adopted'>
+          <h3>Adopted</h3>
+          {petAdopted}
+        </div>
       </div>
     );
   }
 
 
 }
-export default AdoptionPageOne;
+export default AdoptionPageTwo;

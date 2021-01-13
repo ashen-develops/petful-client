@@ -9,6 +9,8 @@ class PeopleInQueue extends Component {
           <li>{this.props.first}</li>
           <li>{this.props.second}</li>
           <li>{this.props.third}</li>
+          <li>{this.props.fourth}</li>
+          <li>{this.props.fifth}</li>
         </ul>
       </div>
     )

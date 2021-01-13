@@ -148,7 +148,8 @@ export class AppContextProvider extends Component {
       setError: this.setError,
       clearError: this.clearError,
       randomCatDog: this.randomCatDog,
-      cycleList: this.cycleList
+      cycleList: this.cycleList,
+      clicked: this.clicked
     };
 
     return (

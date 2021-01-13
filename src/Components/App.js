@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import LandingPage from './LandingPage'
-import AdoptionPage from './AdoptionPage'
+import AdoptionPageOne from './AdoptionPage'
+import AdoptionPageTwo from './AdoptionPageTwo'
+import Congrats from './CongratsPage'
 
 class App extends Component {
 
@@ -15,7 +17,13 @@ class App extends Component {
               exact path='/' component={LandingPage}
             />
             <Route
-              path='/adopt' component={AdoptionPage}
+              path='/adopt1' component={AdoptionPageOne}
+            />
+            <Route
+              path='/adopt2' component={AdoptionPageTwo}
+            />
+            <Route
+              path='/congrats' component={Congrats}
             />
           </Switch>
         </main>

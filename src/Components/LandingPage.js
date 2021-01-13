@@ -1,28 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import PetContext from '../Context/context';
-import PeopleService from '../services/people-service';
 
 class Home extends Component {
-  static contextType = PetContext;
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    this.context.clearUserName();
-    this.context.clearError();
-    
-    let name = document.getElementById('name').value;
-    // console.log(name)
-    this.context.setUserName(name);
-
-    return PeopleService.postPeople(name)
-      .then(res => {
-        const { location, history } = this.props;
-        const destination = (location.state || {}).from || '/adopt';
-        history.push(destination);
-      })
-      .catch(error => console.log(error))
-  }
 
   render() {
     return (
@@ -39,21 +18,9 @@ class Home extends Component {
           alt='this is adoption'
           src='https://i.insider.com/51cd94f0eab8eaae1800001b'
         />
-        <Link to='/adopt'>
+        <Link to='/adopt1'>
           <button> Preview Adoptions </button>
         </Link>
-
-        <form className='addName' onSubmit={this.handleSubmit} >
-          <h2>
-            Adopt a Pet!
-          </h2>
-          <p>
-            By adding your name to the queue you will be matched with an appropritate pet.
-          </p>
-          <label htmlFor='name'>Name</label>
-          <input type='text' name='name' id='name' required />
-          <button type='submit'> Match Me!</button>
-        </form>
       </div>
     );
   }

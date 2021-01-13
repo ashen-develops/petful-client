@@ -1,5 +1,6 @@
 import React from 'react';
 import AppContext from '../Context/context';
+import { Link } from 'react-router-dom';
 
 class Info extends React.Component {
   static contextType = AppContext
@@ -21,13 +22,14 @@ class Info extends React.Component {
           <li>Breed: {animal.breed}</li>
           <li>Description: {animal.description}</li>
         </ul>
+        <Link to='/congrats'>
         <button 
           type='button' 
           onClick={handleAdoptClick}
           disabled={!isFirstInLine}
           >
           Adopt
-        </button>
+        </button></Link>
       </div>
     )
   }
